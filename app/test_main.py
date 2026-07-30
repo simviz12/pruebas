@@ -41,9 +41,11 @@ def test_parse_correo_andino_completo():
     
     assert data["banco"] == "Banco Andino"
     assert data["tipo_movimiento"] == "Credito"
+    assert data["concepto"] == "Transferencia recibida"
     assert data["monto"] == "45.50"
     assert data["fecha"] == "2026-07-14"
     assert data["hora"] == "14:28:00"
+    assert data["estado"] == "Aprobada"
     assert data["referencia"] == "0294817365"
 
 def test_regla_no_negociable_campos_ausentes_son_null():
@@ -61,4 +63,6 @@ def test_regla_no_negociable_campos_ausentes_son_null():
     assert data["hora"] == "10:46:00"
     
     # REGLA NO NEGOCIABLE: Campos que faltan deben ser null
+    assert data["concepto"] is None
+    assert data["estado"] is None
     assert data["referencia"] is None

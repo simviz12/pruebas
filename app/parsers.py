@@ -34,17 +34,21 @@ def _parse_hora(hora_str: str) -> time | None:
 
 def parse_andino(texto: str) -> ParseResult:
     tipo = re.search(r'Tipo de movimiento\s*:\s*(.*)', texto)
+    concepto = re.search(r'Concepto\s*:\s*(.*)', texto)
     monto = re.search(r'Valor\s*:\s*(.*)', texto)
     fecha = re.search(r'Fecha\s*:\s*([\d/]+)', texto)
     hora = re.search(r'Hora\s*:\s*([\d:]+)', texto)
     ref = re.search(r'Referencia\s*:\s*(\d+)', texto)
+    estado = re.search(r'Estado\s*:\s*(.*)', texto)
 
     return ParseResult(
         banco="Banco Andino",
         tipo_movimiento=tipo.group(1).strip() if tipo else None,
+        concepto=concepto.group(1).strip() if concepto else None,
         monto=_parse_monto(monto.group(1)) if monto else None,
         fecha=_parse_fecha(fecha.group(1)) if fecha else None,
         hora=_parse_hora(hora.group(1)) if hora else None,
+        estado=estado.group(1).strip() if estado else None,
         referencia=ref.group(1).strip() if ref else None
     )
 
@@ -58,9 +62,11 @@ def parse_litoral(texto: str) -> ParseResult:
     return ParseResult(
         banco="Banco del Litoral",
         tipo_movimiento=tipo,
+        concepto=None,
         monto=_parse_monto(monto.group(1)) if monto else None,
         fecha=_parse_fecha(fecha.group(1)) if fecha else None,
         hora=_parse_hora(hora.group(1)) if hora else None,
+        estado=None,
         referencia=ref.group(1).strip() if ref else None
     )
 
@@ -70,13 +76,16 @@ def parse_produbank(texto: str) -> ParseResult:
     fecha = re.search(r'Fecha de proceso:\s*([\d/]+)', texto)
     hora = re.search(r'Hora de proceso:\s*([\d:]+)', texto)
     ref = re.search(r'Nro\. de referencia:\s*(\d+)', texto)
+    estado = re.search(r'Estado:\s*(.*)', texto)
 
     return ParseResult(
         banco="Produbank",
         tipo_movimiento=tipo.group(1).strip() if tipo else None,
+        concepto=tipo.group(1).strip() if tipo else None,
         monto=_parse_monto(monto.group(1)) if monto else None,
         fecha=_parse_fecha(fecha.group(1)) if fecha else None,
         hora=_parse_hora(hora.group(1)) if hora else None,
+        estado=estado.group(1).strip() if estado else None,
         referencia=ref.group(1).strip() if ref else None
     )
 
