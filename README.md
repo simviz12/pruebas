@@ -16,13 +16,13 @@ Microservicio en FastAPI encargado de recibir correos de notificaciones bancaria
 
 2. **Levantar el servicio:**
    ```bash
-   uvicorn app.main:app --reload
+   python -m uvicorn app.main:app --reload
    ```
    El servicio estará disponible en `http://127.0.0.1:8000`. Puedes acceder a la documentación interactiva en `http://127.0.0.1:8000/docs`.
 
 3. **Ejecutar Pruebas Automatizadas:**
    ```bash
-   pytest app/test_main.py -v
+   python -m pytest -v app/test_main.py
    ```
 
 ## 📁 Estructura del Proyecto
@@ -40,3 +40,16 @@ Microservicio en FastAPI encargado de recibir correos de notificaciones bancaria
 1. **`Decimal` vs `float`:** No se utiliza `float` en ninguna parte de la lógica financiera para evitar discrepancias por la precisión de coma flotante de IEEE 754.
 2. **Strict Nulls (`| None = None`):** En Pydantic v2, se implementan Union Types nativos forzando defaults de nulos, previniendo inicializaciones con cadenas vacías en caso de carencia de datos.
 3. **Idempotencia implícita:** Corrección del error de doble gasto consumiendo formalmente los estados en los scripts de prueba bancarios para prevenir que el comerciante consolide una venta múltiples veces con la misma referencia.
+## 📊 Cobertura de pruebas
+
+Para obtener un reporte de cobertura sin depender de la variable `PATH`:
+
+```bash
+python -m pip install coverage
+python -m coverage run -m pytest -v app/test_main.py
+python -m coverage report -m
+```
+
+> Si prefieres usar los comandos `coverage` directamente, añade el directorio
+> `C:\Users\usuario\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.12_qbz5n2kfra8p0\LocalCache\local-packages\Python312\Scripts`
+> a tu variable de entorno **PATH**.
