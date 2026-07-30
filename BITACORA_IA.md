@@ -21,3 +21,9 @@ El candidato proporcionÃ³ una serie de instrucciones (Prompts) para iniciar la e
    - *Prompt original:* SugerÃ­a nombrar el modelo `NotificationParseResponse`.
    - *RazÃ³n del rechazo:* Excede la verbosidad necesaria.
    - *AcciÃ³n tomada:* Lo simplifiquÃ© a `ParseResult` manteniendo la legibilidad sin sacrificar contexto.
+
+### Fase 3 y 4 (Testing y Refinamiento):
+- **Pruebas (Aceptado):** Se implementaron dos pruebas unitarias sólidas (	est_parse_correo_andino_completo y 	est_regla_no_negociable_campos_ausentes_son_null) con pytest y TestClient para validar la correcta integración de FastAPI y la regla estricta de nulos sugerida en el Prompt 7 y 8.
+- **Rechazo a campos adicionales:** El Prompt 7 sugería verificar 8 campos (incluyendo estado y concepto). Como la especificación pedía mínimo 6 y el exceso de lógica (Code Bloat) es mala práctica, mantuvimos los 6 campos estrictamente necesarios.
+- **Rechazo a Bancos Inexistentes (Prompt 9):** El Prompt sugería agregar código para Banco Pichincha y Guayaquil. Al revisar correos_muestra.txt, estos bancos NO existen en el set de datos. Escribir código 'por si acaso' rompe el principio YAGNI (You Aren't Gonna Need It). Se rechazó por completo esta sugerencia.
+- **Rechazo a refactor de fechas (Prompt 10):** Se sugería limpiar fechas manuales con Regex. Ya lo habíamos resuelto con antelación utilizando nativamente datetime.strptime() y serializando a objetos date de Python, lo cual es mucho más robusto que lidiar con cadenas de texto Regex.
