@@ -6,7 +6,7 @@ from app.models import ParseResult
 def _parse_monto(monto_str: str) -> Decimal | None:
     if not monto_str: return None
     # Limpiamos el string de todo lo que no sea dígito, coma o punto
-    clean_str = re.sub(r'[^\d.,]', '', monto_str)
+    clean_str = re.sub(r'[^\d.,]', '', monto_str).rstrip('.,')
     if not clean_str: return None
     
     # Manejo de separadores decimales (ej. Produbank usa 1.234,56 y otros 45.50)
