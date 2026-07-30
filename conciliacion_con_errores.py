@@ -3,6 +3,7 @@ bancarias recibidas en su bandeja de correo."""
 
 from dataclasses import dataclass
 from datetime import datetime, timedelta
+from decimal import Decimal
 
 VENTANA_TOLERANCIA = timedelta(minutes=90)
 
@@ -12,7 +13,7 @@ class Venta:
     """Venta que el comerciante reporto enviando un comprobante."""
 
     id: str
-    monto: float
+    monto: Decimal
     momento: datetime
     referencia: str | None = None
 
@@ -23,7 +24,7 @@ class CorreoBancario:
 
     id: str
     banco: str
-    monto: float
+    monto: Decimal
     momento: datetime
     referencia: str | None = None
     consumido: bool = False
@@ -68,12 +69,14 @@ def conciliar(ventas: list[Venta], correos: list[CorreoBancario]) -> list[Result
                 continue
             if not _referencias_compatibles(venta, correo):
                 continue
+            
             candidato = correo
             break
 
         if candidato is None:
             resultados.append(Resultado(venta.id, None, False, "sin_notificacion_coincidente"))
         else:
+            candidato.consumido = True  # FIX: Marcar como consumido para no re-usarlo
             resultados.append(Resultado(venta.id, candidato.id, True, "coincidencia_confirmada"))
 
     return resultados
@@ -82,14 +85,15 @@ def conciliar(ventas: list[Venta], correos: list[CorreoBancario]) -> list[Result
 if __name__ == "__main__":
     base = datetime(2026, 7, 14, 14, 30)
 
+    # Convertimos a Decimal pero pasando strings para evitar errores de coma flotante desde su creacion
     ventas = [
-        Venta(id="V-001", monto=11.10 + 52.20, momento=base),
-        Venta(id="V-002", monto=45.50, momento=base + timedelta(minutes=20)),
-        Venta(id="V-003", monto=45.50, momento=base + timedelta(minutes=55)),
+        Venta(id="V-001", monto=Decimal("11.10") + Decimal("52.20"), momento=base),
+        Venta(id="V-002", monto=Decimal("45.50"), momento=base + timedelta(minutes=20)),
+        Venta(id="V-003", monto=Decimal("45.50"), momento=base + timedelta(minutes=55)),
     ]
     correos = [
-        CorreoBancario("C-001", "Banco Andino", 63.30, base - timedelta(minutes=3), "0294817001"),
-        CorreoBancario("C-002", "Banco Andino", 45.50, base + timedelta(minutes=18), "0294817365"),
+        CorreoBancario("C-001", "Banco Andino", Decimal("63.30"), base - timedelta(minutes=3), "0294817001"),
+        CorreoBancario("C-002", "Banco Andino", Decimal("45.50"), base + timedelta(minutes=18), "0294817365"),
     ]
 
     for resultado in conciliar(ventas, correos):
